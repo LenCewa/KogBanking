@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -62,8 +61,8 @@ public class Transaction extends Activity {
         scanIBAN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //image = BitmapFactory.decodeResource(getResources(), R.id.ibanPic);
-                image = ((BitmapDrawable)ibanPic.getDrawable()).getBitmap();
+                //image = ((BitmapDrawable)ibanPic.getDrawable()).getBitmap();
+                image = BitmapFactory.decodeResource(getResources(), R.drawable.bank);
                 datapath = getFilesDir()+ "/tesseract/";
                 checkFile(new File(datapath + "tessdata/"));
                 String lang = "eng";
@@ -71,7 +70,9 @@ public class Transaction extends Activity {
                 mTess.init(datapath, lang);
                 mTess.setImage(image);
                 String result = mTess.getUTF8Text();
+                result = extractIban(result);
                 resultText.setText(result);
+                mTess.end();
             }
         });
     }
@@ -125,5 +126,10 @@ public class Transaction extends Activity {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             ibanPic.setImageBitmap(photo);
         }
+    }
+
+    private String extractIban(String imageResult){
+        String iban = imageResult.substring(4, 32);
+        return iban;
     }
 }
