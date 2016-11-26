@@ -30,7 +30,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import ibm.kogbanking.Home;
 import ibm.kogbanking.logic.VisualRecognitionTest;
 import ibm.kogbanking.logic.RealPathUtil;
 import java.io.File;

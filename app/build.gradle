@@ -28,4 +28,6 @@ dependencies {
     compile 'com.android.support:design:24.2.1'
     compile 'com.ibm.watson.developer_cloud:java-sdk:3.5.1'
     testCompile 'junit:junit:4.12'
+    compile 'com.google.android.gms:play-services-appindexing:8.4.0'
+    compile 'com.rmtheis:tess-two:6.0.3'
 }
