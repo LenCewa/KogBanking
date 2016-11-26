@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:text="Transaction from"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/transID"
+        android:textSize="18sp" />
+
+    <TextView
+        android:layout_below="@+id/transID"
+        android:text="Transaction topic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/topic"
+        android:textSize="18sp" />
+
+    <TextView
+        android:text="Amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/amount"
+        android:layout_alignEnd="@+id/transID"
+        android:layout_alignRight="@+id/transID"
+        android:layout_alignBottom="@+id/topic"
+        android:layout_alignTop="@+id/transID"
+        android:textAlignment="viewStart"
+        android:textSize="24sp" />
+</RelativeLayout>
