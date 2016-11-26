@@ -4,19 +4,20 @@
     android:layout_width="match_parent" android:layout_height="match_parent">
 
     <ImageView
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:src="@mipmap/ic_launcher"
         android:layout_height="100dp"
-        app:srcCompat="@mipmap/ic_launcher"
         android:id="@+id/profilePic"
-        android:layout_centerHorizontal="true"
         android:layout_width="100dp" />
 
     <TextView
         android:text="Balance"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/profilePic"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
+        android:layout_toRightOf="@+id/profilePic"
+        android:layout_alignTop="@+id/profilePic"
+        android:layout_marginRight="20dp"
         android:id="@+id/balance"
         android:textSize="24sp"
         android:textAlignment="center"
@@ -24,20 +25,31 @@
 
     <Button
         android:text="Transaction"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/balance"
-        android:layout_centerHorizontal="true"
+        android:layout_toRightOf="@+id/profilePic"
+        android:layout_alignBottom="@+id/profilePic"
+        android:layout_marginRight="20dp"
         android:id="@+id/transactionButton"
-        android:layout_marginTop="20dp"
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:textColor="@android:color/holo_blue_dark" />
 
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="83dp"
+        android:id="@+id/olderTransactions"
+        android:layout_below="@+id/profilePic"
+        android:layout_alignLeft="@+id/profilePic"
+        android:layout_alignStart="@+id/profilePic" />
+
+    <Button
+        android:text="VoiceRecog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/transactionButton"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:id="@+id/olderTransactions"/>
+        android:layout_marginTop="18dp"
+        android:id="@+id/voiceRecogBtn" />
 </RelativeLayout>
