@@ -35,4 +35,21 @@ Wochenreport | Überblick über die entstandenen entstandenen Transaktionen der 
 Warnung | Kenntlich machen wenn unstimmigkeiten sichtbar sind | Dringlichkeit definieren, etc.
 Reminder | Falls man eine Überweisung tätigen will, kann man hier die Überweisung im Entwurf speichern und die App benachritigt den Nutzer wenn der Zeitpunkt der Überweisung stattgefunden hat. Diese kann durch eine einfache Bestätigung durchgeführt werden. Familie könnte vorgefertigte Überweisungen definieren (bspw.) | `TODO`
 
+### Datenspeicherung
+- Die IBAN kann Verbal per *voice to text* gespeichert werden
+- Die IBAN kann durch das *visuelle einlesen der Karte* eingespeichert werden
+
 ### Überweisungsvorgang
+1. Ich möchte eine Überweisung tätigen
+2. Namen Nennen
+   a. Name nicht bekannt? -> Daten das erste mal Speichern (weiter mit 3.)
+3. Name ist bekannt
+4. Daten werden automatisch aufgefüllt
+5. Betragshöhe angeben
+6. Bestätigung des Inputs
+7. TAN? [siehe hier](#keine-tan)
+8. Wiederholung der Überweisung
+9. Durchführen der Überweisung
+
+### Wunschfeature
+- NFC Handy an Handy legen und eine Fast-Forward Überweisung
