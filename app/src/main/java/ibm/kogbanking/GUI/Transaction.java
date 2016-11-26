@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -61,7 +62,8 @@ public class Transaction extends Activity {
         scanIBAN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                image = BitmapFactory.decodeResource(getResources(), R.drawable.bank);
+                //image = BitmapFactory.decodeResource(getResources(), R.id.ibanPic);
+                image = ((BitmapDrawable)ibanPic.getDrawable()).getBitmap();
                 datapath = getFilesDir()+ "/tesseract/";
                 checkFile(new File(datapath + "tessdata/"));
                 String lang = "eng";
