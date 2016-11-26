@@ -5,7 +5,6 @@ IBM Hackatron
  - Universelle Bankingapp (Institutunabhängig)
 
 ## Aufbau der App
----
 
 ### Login
 Es soll ein Login ermöglicht werden mit:
@@ -21,9 +20,9 @@ Es soll ein Login ermöglicht werden mit:
 ### Speichern der ein- und ausgehenden Überweisungen
 Jede Überweisung die ein- oder ausgeht wird auf einer Cloud gespeichert. So können:
 - Die Daten sofort abgefragt werden über
-  a. IBAN
-  b. Name
-  c. Kreditinstitut
+  ..1. IBAN
+  ..2. Name
+  ..3. Kreditinstitut
   Und eine schneller Überweisungsvorgang soll ermöglicht ewrden
   
  ### Notifications
