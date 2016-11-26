@@ -23,16 +23,12 @@ Jede Überweisung die ein- oder ausgeht wird auf einer Cloud gespeichert. So kö
 1. IBAN
 2. Name
 3. Kreditinstitut
-
-um einen schnelleren Überweisungsvorgang zu ermöglichen
+um einen schnelleren Überweisungsvorgang zu ermöglichen.
   
 ### Notifications
 Es gibt die folgenden Möglichkeiten Benachrichtigungen zu erhalten
 Typ | Ziel | Einstellung
 --- | --- | ---
-Deadlines für eingehende Überweisungen | Man kann der App einen Namen (der in der Datenbank hinterlegt ist) und diese Prüuft ob der einzureichende Betrag in der richtigen Höhe zum Richtigen Zeitpunkt eingegangen ist. So muss man seiner Überweisung nicht hinterherlaufen. | Es kann eingestellt werden wann und wie man die Benachrichtiung erhalten will
-Wochenreport | Überblick über die entstandenen entstandenen Transaktionen der Woche | Zeitraum einstelen, etc.
-Warnung | Kenntlich machen wenn unstimmigkeiten sichtbar sind | Dringlichkeit definieren, etc.
-Reminder | Falls man eine Überweisung tätigen will, kann man hier die Überweisung im Entwurf speichern und die App benachritigt den Nutzer wenn der Zeitpunkt der Überweisung stattgefunden hat. Diese kann durch eine einfache Bestätigung durchgeführt werden. Familie könnte vorgefertigte Überweisungen definieren (bspw.) | `TODO`
+
  
 ### Überweisungsvorgang
