@@ -60,7 +60,7 @@ public class WatsonPost extends WatsonService {
                 .negativeExamples(negatives)
                 .build();
 
-        createClassifier(options);
+        ServiceCall s = createClassifier(options);
     }
 
 
