@@ -26,7 +26,7 @@ Jede Überweisung die ein- oder ausgeht wird auf einer Cloud gespeichert. So kö
 um einen schnelleren Überweisungsvorgang zu ermöglichen.
   
 ### Notifications
-Es gibt die folgenden Möglichkeiten Benachrichtigungen zu erhalten
+
 Typ | Ziel | Einstellung
 --- | --- | ---
 
