@@ -41,8 +41,7 @@ Reminder | Falls man eine Überweisung tätigen will, kann man hier die Überwei
 
 ### Überweisungsvorgang
 1. Ich möchte eine Überweisung tätigen
-2. Namen Nennen
- a. Name nicht bekannt? -> Daten das erste mal Speichern (weiter mit 3.)
+2. Namen Nennen -|- Name nicht bekannt? -> Daten das erste mal Speichern (weiter mit 3.)
 3. Name ist bekannt
 4. Daten werden automatisch aufgefüllt
 5. Betragshöhe angeben
