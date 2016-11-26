@@ -32,9 +32,9 @@ import okhttp3.MultipartBody.Builder;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 
-public class WatsonPost extends WatsonService {
+public class WatsonPost extends VisualRecognition {
 
-
+    ServiceCall s;
     /**
      * Instantiates a new Watson service.
      *
@@ -59,8 +59,13 @@ public class WatsonPost extends WatsonService {
                 .addClass("user", positives)
                 .negativeExamples(negatives)
                 .build();
+        s = createClassifier(options);
+    }
 
-        ServiceCall s = createClassifier(options);
+    public String executeTask() {
+
+        VisualClassifier v = (VisualClassifier) s.execute();
+        return v.toString();
     }
 
 
@@ -82,6 +87,7 @@ public class WatsonPost extends WatsonService {
         }
 
         RequestBuilder requestBuilder = RequestBuilder.post("https://gateway-a.watsonplatform.net/visual-recognition/api/v3/classifiers");
+        requestBuilder.query("api_key", "fb4a8bba6e9887fb22430cdcca8d181a3ac55711").body(bodyBuilder.build());
         requestBuilder.query("version", "2016-05-20").body(bodyBuilder.build());
 
         return createServiceCall(requestBuilder.build(), ResponseConverterUtils.getObject(VisualClassifier.class));
