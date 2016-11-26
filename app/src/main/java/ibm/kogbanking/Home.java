@@ -29,7 +29,7 @@ public class Home extends Activity {
         String[] test2= {"DE43 432094324","Einkauf", "43$","22.11.16"};
         String[] test3 = {"DE43 324989234","Versicherung", "590$","19.11.16"};
         String[] test4 = {"DE43 342789849","Miete", "1034$","19.11.16"};
-        String[] test5 = {"DE43 989827498","Test Topic", "989$","16.11.16"};
+        String[] test5 = {"DE43 989827498","Amazon", "989$","16.11.16"};
         String[] test6 = {"DE43 238974832","Urlaub", "1320$","13.11.16"};
 
         account.add(0, test1);
