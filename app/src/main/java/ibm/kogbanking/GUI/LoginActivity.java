@@ -30,6 +30,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import ibm.kogbanking.Home;
 import ibm.kogbanking.logic.VisualRecognitionTest;
 import ibm.kogbanking.logic.RealPathUtil;
 import java.io.File;
@@ -98,6 +99,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
                 startActivityForResult(Intent.createChooser(intent, "Select Picture"), 1);
+            }
+        });
+
+        Button skipButton = (Button) findViewById(R.id.skipButton);
+        skipButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, Home.class);
+                startActivity(intent);
             }
         });
 

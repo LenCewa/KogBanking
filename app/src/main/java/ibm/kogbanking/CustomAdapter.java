@@ -44,10 +44,12 @@ public class CustomAdapter extends BaseAdapter {
         TextView transID = (TextView) convertView.findViewById(R.id.transID);
         TextView topic = (TextView) convertView.findViewById(R.id.topic);
         TextView amount = (TextView) convertView.findViewById(R.id.amount);
+        TextView date = (TextView) convertView.findViewById(R.id.date);
 
         transID.setText(data.get(position)[0]);
         topic.setText(data.get(position)[1]);
         amount.setText(data.get(position)[2]);
+        date.setText(data.get(position)[3]);
 
         return convertView;
     }
