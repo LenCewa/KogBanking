@@ -23,22 +23,20 @@ import ibm.kogbanking.R;
 
 public class VisualRecognitionTest extends AsyncTask<Void, Void, String> {
 
-    Activity callingActivity;
     File file;
 
-    public VisualRecognitionTest(Activity callingActivity, File file){
-        this.callingActivity = callingActivity;
+    public VisualRecognitionTest(File file){
         this.file = file;
     }
 
     @Override
     protected String doInBackground(Void... params) {
         VisualRecognition service = new VisualRecognition(VisualRecognition.VERSION_DATE_2016_05_20);
-        service.setApiKey("{fb4a8bba6e9887fb22430cdcca8d181a3ac55711}");
+        service.setApiKey("fb4a8bba6e9887fb22430cdcca8d181a3ac55711");
 
 
-        Resources resources = callingActivity.getResources();
         ClassifyImagesOptions options = new ClassifyImagesOptions.Builder()
+                .classifierIds("person_1582834732")
                 .images(file)
                 .build();
         VisualClassification result = service.classify(options).execute();
