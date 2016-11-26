@@ -18,6 +18,7 @@ import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.FaceDetector;
 
+import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfRect;
@@ -28,11 +29,16 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import ibm.kogbanking.R;
 
@@ -63,7 +69,6 @@ public class SaveImages extends AsyncTask<Uri, Object, Object> {
         Uri uri = params[0];
 
         File sdcard = Environment.getExternalStorageDirectory();
-        //file = new File(sdcard, "auth.mp4");
 
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
 
@@ -71,7 +76,7 @@ public class SaveImages extends AsyncTask<Uri, Object, Object> {
             retriever.setDataSource(callingActivity, uri);
 
             for (int i = 0; i < 10; i++) {
-                files[i] = faceDetector(savebitmap("pic" + i, retriever.getFrameAtTime(33333, MediaMetadataRetriever.OPTION_CLOSEST)),i);
+                files[i] = faceDetector(retriever.getFrameAtTime(33333, MediaMetadataRetriever.OPTION_CLOSEST),i);
             }
         } catch (IllegalArgumentException ex) {
             ex.printStackTrace();
@@ -93,7 +98,7 @@ public class SaveImages extends AsyncTask<Uri, Object, Object> {
         new Compress(callingActivity, files, "positives.zip").zip();
     }
 
-    public String faceDetector(String path, int i){
+    public String faceDetector(Bitmap bmp, int i){
         InputStream is = callingActivity.getResources().openRawResource(R.raw.haarcascade_frontalface_alt);
         File cascadeDir = callingActivity.getDir("cascade", Context.MODE_PRIVATE);
         File mCascadeFile = new File(cascadeDir, "haarcascade_frontalface_alt.xml");
@@ -113,7 +118,8 @@ public class SaveImages extends AsyncTask<Uri, Object, Object> {
         }
 
         CascadeClassifier faceDetector = new CascadeClassifier(mCascadeFile.getAbsolutePath());
-        Mat image = Imgcodecs.imread(path);
+        Mat image = new Mat();
+        Utils.bitmapToMat(bmp, image);
 
         MatOfRect faceDetections = new MatOfRect();
         faceDetector.detectMultiScale(image, faceDetections);
@@ -126,32 +132,7 @@ public class SaveImages extends AsyncTask<Uri, Object, Object> {
         String file_path = Environment.getExternalStorageDirectory().getAbsolutePath();
         String filename = file_path + "/" + "output" + i + ".jpg";
         Imgcodecs.imwrite(filename, new Mat(image, rect));
+
         return filename;
-    }
-
-    private String savebitmap(String filename, Bitmap bmp) {
-
-        String file_path = Environment.getExternalStorageDirectory().getAbsolutePath();
-        File dir = new File(file_path);
-        if(!dir.exists())
-            dir.mkdirs();
-        File file = new File(dir, filename + ".jpg");
-        FileOutputStream fOut = null;
-        try {
-            fOut = new FileOutputStream(file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        bmp.compress(Bitmap.CompressFormat.JPEG, 50, fOut);
-        try {
-            fOut.flush();
-            fOut.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return file.getAbsolutePath();
-
     }
 }
