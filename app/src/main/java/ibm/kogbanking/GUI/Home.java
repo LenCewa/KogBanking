@@ -24,6 +24,7 @@ public class Home extends Activity {
     TextView balance;
     Button transactionButton;
     ListView olderTransactions;
+    Button voiceUI;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,7 +36,7 @@ public class Home extends Activity {
         String[] test3 = {"DE43 324989234","Versicherung", "590$","19.11.16"};
         String[] test4 = {"DE43 342789849","Miete", "1034$","19.11.16"};
         String[] test5 = {"DE43 989827498","Amazon", "989$","16.11.16"};
-        String[] test6 = {"DE43 238974832","Urlaub", "1320$","13.11.16"};
+        String[] test6 = {"DE43 238974832","Urlaub", "13200$","13.11.16"};
 
         account.add(0, test1);
         account.add(0, test2);
@@ -48,6 +49,7 @@ public class Home extends Activity {
         balance = (TextView) findViewById(R.id.balance);
         transactionButton = (Button) findViewById(R.id.transactionButton);
         olderTransactions = (ListView) findViewById(R.id.olderTransactions);
+        voiceUI = (Button) findViewById(R.id.voiceRecogBtn);
 
         balance.setText("20000$");
 
@@ -56,6 +58,14 @@ public class Home extends Activity {
             public void onClick(View v) {
                 Intent intent = new Intent(Home.this, Transaction.class);
                 startActivity(intent);
+            }
+        });
+
+        voiceUI.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(Home.this, VoiceInterfaceActivity.class);
+                startActivity(i);
             }
         });
 
