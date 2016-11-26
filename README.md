@@ -26,9 +26,11 @@ Jede Überweisung die ein- oder ausgeht wird auf einer Cloud gespeichert. So kö
 um einen schnelleren Überweisungsvorgang zu ermöglichen.
   
 ### Notifications
+Es gibt mehrere Möglichkeiten Notifications zu erhalten
 
 Typ | Ziel | Einstellung
 --- | --- | ---
-
+Deadlines für eingehende Überweisungen | Man kann der App einen Namen (der in der Datenbank hinterlegt ist) und diese Prüuft ob der einzureichende Betrag in der richtigen Höhe zum Richtigen Zeitpunkt eingegangen ist. So muss man seiner Überweisung nicht hinterherlaufen. | Es kann eingestellt werden wann und wie man die Benachrichtiung erhalten will
+Wochenreport
  
 ### Überweisungsvorgang
