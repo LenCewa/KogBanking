@@ -31,7 +31,6 @@ Es gibt mehrere Möglichkeiten Notifications zu erhalten
 Typ | Ziel | Einstellung
 --- | --- | ---
 Deadlines für eingehende Überweisungen | Man kann der App einen Namen (der in der Datenbank hinterlegt ist) und diese Prüuft ob der einzureichende Betrag in der richtigen Höhe zum Richtigen Zeitpunkt eingegangen ist. So muss man seiner Überweisung nicht hinterherlaufen. | Es kann eingestellt werden wann und wie man die Benachrichtiung erhalten will
-
 Wochenreport | Überblick über die entstandenen entstandenen Transaktionen der Woche | Zeitraum einstelen, etc.
 Warnung 
 
