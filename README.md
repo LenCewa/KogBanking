@@ -50,5 +50,8 @@ Reminder | Falls man eine Überweisung tätigen will, kann man hier die Überwei
 8. Wiederholung der Überweisung
 9. Durchführen der Überweisung
 
+### Kontostand abfragen
+- Nennen des Kontostands
+
 ### Wunschfeature
 - NFC Handy an Handy legen und eine Fast-Forward Überweisung
