@@ -3,7 +3,10 @@ package ibm.kogbanking.GUI;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -38,6 +41,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfRect;
+import org.opencv.core.Rect;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
+import org.opencv.objdetect.CascadeClassifier;
 
 import ibm.kogbanking.logic.SaveImages;
 import ibm.kogbanking.logic.VisualRecognitionTest;
@@ -50,6 +60,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +75,7 @@ import static android.Manifest.permission.READ_CONTACTS;
  */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
+    boolean accountSet = false;
     /**
      * Id to identity READ_CONTACTS permission request.
      */
@@ -113,16 +125,24 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-                if (takeVideoIntent.resolveActivity(getPackageManager()) != null) {
-                    startActivityForResult(takeVideoIntent, 1);
-                }
+        SharedPreferences sp = getSharedPreferences("login", Activity.MODE_PRIVATE);
+        String classifier = sp.getString("classifier", "");
+        if(!classifier.equals(""))
+            accountSet = true;
+
+
+        if(accountSet){
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                startActivityForResult(takePictureIntent, 1);
             }
-        });
+        }
+        else {
+            Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+            if (takeVideoIntent.resolveActivity(getPackageManager()) != null) {
+                startActivityForResult(takeVideoIntent, 1);
+            }
+        }
 
         Button skipButton = (Button) findViewById(R.id.skipButton);
         skipButton.setOnClickListener(new OnClickListener() {
@@ -151,39 +171,62 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1 && resultCode == RESULT_OK) {
-            Uri videoUri = data.getData();
-            //saveVideo(videoUri);
-            new SaveImages(this).execute(videoUri);
+            if(accountSet){
+                Uri imageUri = data.getData();
+                try {
+                    faceDetector(MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri));
+                    String file_path = Environment.getExternalStorageDirectory().getAbsolutePath();
+                    String filename = "login.png";
+                    File f = new File(file_path, filename);
+                    new VisualRecognitionTest(this, f);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            else {
+                Uri videoUri = data.getData();
+                new SaveImages(this).execute(videoUri);
+            }
         }
     }
 
-
-
-    public void saveVideo(Uri sourceuri){
-        String sourceFilename= sourceuri.getPath();
-        String destinationFilename = android.os.Environment.getExternalStorageDirectory().getPath()+File.separatorChar+"auth.mp4";
-
-        BufferedInputStream bis = null;
-        BufferedOutputStream bos = null;
-
+    public String faceDetector(Bitmap bmp){
+        InputStream is = getResources().openRawResource(R.raw.haarcascade_frontalface_alt);
+        File cascadeDir = getDir("cascade", Context.MODE_PRIVATE);
+        File mCascadeFile = new File(cascadeDir, "haarcascade_frontalface_alt.xml");
         try {
-            bis = new BufferedInputStream(new FileInputStream(sourceFilename));
-            bos = new BufferedOutputStream(new FileOutputStream(destinationFilename, false));
-            byte[] buf = new byte[1024];
-            bis.read(buf);
-            do {
-                bos.write(buf);
-            } while(bis.read(buf) != -1);
-        } catch (IOException e) {
+            FileOutputStream os = new FileOutputStream(mCascadeFile);
 
-        } finally {
-            try {
-                if (bis != null) bis.close();
-                if (bos != null) bos.close();
-            } catch (IOException e) {
-
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = is.read(buffer)) != -1) {
+                os.write(buffer, 0, bytesRead);
             }
+            is.close();
+            os.close();
         }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+
+        CascadeClassifier faceDetector = new CascadeClassifier(mCascadeFile.getAbsolutePath());
+        Mat image = new Mat();
+        Utils.bitmapToMat(bmp, image);
+        Imgproc.cvtColor(image, image, Imgproc.COLOR_BGR2RGB);
+
+        MatOfRect faceDetections = new MatOfRect();
+        faceDetector.detectMultiScale(image, faceDetections);
+
+        Rect rect = new Rect();
+        for (Rect r : faceDetections.toArray()) {
+            rect = r;
+        }
+
+        String file_path = Environment.getExternalStorageDirectory().getAbsolutePath();
+        String filename = file_path + "/" + "login" + ".png";
+        Imgcodecs.imwrite(filename, new Mat(image, rect));
+
+        return filename;
     }
 
     private boolean mayRequestContacts() {

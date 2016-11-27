@@ -1,6 +1,7 @@
 package ibm.kogbanking.logic;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -10,6 +11,8 @@ import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ClassifyImages
 import com.ibm.watson.developer_cloud.visual_recognition.v3.model.VisualClassification;
 
 import java.io.File;
+
+import ibm.kogbanking.GUI.Home;
 
 /**
  * Created by Yannick on 26.11.2016.
@@ -43,6 +46,7 @@ public class VisualRecognitionTest extends AsyncTask<Void, Void, String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        Log.e("result", s);
+        Intent i = new Intent(callingActivity, Home.class);
+        callingActivity.startActivity(i);
     }
 }
