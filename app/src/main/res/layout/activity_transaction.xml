@@ -35,11 +35,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/resultText"
-        android:textAlignment="center"
+        android:textAlignment="viewStart"
         android:textSize="18sp"
         android:textColor="@android:color/black"
         android:layout_below="@+id/scanIBAN"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="23dp" />
+
 </RelativeLayout>
