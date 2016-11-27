@@ -1,12 +1,15 @@
 package ibm.kogbanking.logic;
 
 import android.app.Activity;
+import android.media.AudioManager;
+import android.media.AudioTrack;
 import android.media.MediaPlayer;
 import android.net.rtp.AudioStream;
 import android.os.AsyncTask;
 import android.os.Environment;
 
 import com.ibm.watson.developer_cloud.http.ServiceCall;
+import com.ibm.watson.developer_cloud.text_to_speech.v1.model.AudioFormat;
 import com.ibm.watson.developer_cloud.text_to_speech.v1.model.Voice;
 import com.ibm.watson.developer_cloud.text_to_speech.v1.util.WaveUtils;
 
@@ -39,7 +42,7 @@ public class WatsonSpeech extends AsyncTask<Void, Void, Void> {
                 ServiceCall<InputStream> stream = service.synthesize(text, Voice.EN_ALLISON);
 
                 InputStream in = WaveUtils.reWriteWaveHeader(stream.execute());
-                
+
                 File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "helloWorld.wav");
                 OutputStream out = new FileOutputStream(file);
                 byte[] buffer = new byte[1024];
@@ -56,8 +59,18 @@ public class WatsonSpeech extends AsyncTask<Void, Void, Void> {
                     ex.printStackTrace();
                 }
                 out.close();
-                in.close();
 
+                int i = 0;
+                int size = AudioTrack.getMinBufferSize(44100, android.media.AudioFormat.CHANNEL_CONFIGURATION_MONO, android.media.AudioFormat.ENCODING_PCM_16BIT);
+
+                AudioTrack a = new AudioTrack(AudioManager.STREAM_MUSIC, 44100,
+                        android.media.AudioFormat.CHANNEL_CONFIGURATION_MONO, android.media.AudioFormat.ENCODING_PCM_16BIT, size, AudioTrack.MODE_STREAM);
+                byte[] music = new byte[512];
+                a.play();
+                while((i = in.read(music)) != -1)
+                    a.write(music, 0, i);
+
+                in.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
