@@ -59,6 +59,7 @@ import java.util.List;
 import java.util.Locale;
 
 import ibm.kogbanking.R;
+import ibm.kogbanking.logic.WatsonSpeech;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -101,10 +102,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-
-
-//        speakOut("Nehmen sie bitte ein Foto von ihrem Gesicht auf");
-
         if (!OpenCVLoader.initDebug()) {
             // Handle initialization error
         }
@@ -113,23 +110,24 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         SharedPreferences sp = getSharedPreferences("classifier", Activity.MODE_PRIVATE);
         classifier = sp.getString("classifier", "");
         if(!classifier.equals("")) {
-            Log.e("hallo", "Hallo");
             accountSet = true;
         }
-/**
+
         if(accountSet){
+            new WatsonSpeech(this, "Please hold your phone in front of your face and take a photo of yourself").execute();
             Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
                 startActivityForResult(takePictureIntent, 1);
             }
         }
         else {
+            new WatsonSpeech(this, "Please hold your phone in front of your face and take a video of yourself so you can login with your face next time").execute();
             Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
             if (takeVideoIntent.resolveActivity(getPackageManager()) != null) {
                 startActivityForResult(takeVideoIntent, 1);
             }
         }
- **/
+
         Button skipButton = (Button) findViewById(R.id.skipButton);
         skipButton.setOnClickListener(new OnClickListener() {
             @Override

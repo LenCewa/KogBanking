@@ -59,18 +59,21 @@ public class WatsonSpeech extends AsyncTask<Void, Void, Void> {
                     ex.printStackTrace();
                 }
                 out.close();
+                in.close();
 
+                InputStream is = new FileInputStream(file);
                 int i = 0;
-                int size = AudioTrack.getMinBufferSize(44100, android.media.AudioFormat.CHANNEL_CONFIGURATION_MONO, android.media.AudioFormat.ENCODING_PCM_16BIT);
+                int size = AudioTrack.getMinBufferSize(22000, android.media.AudioFormat.CHANNEL_CONFIGURATION_MONO, android.media.AudioFormat.ENCODING_PCM_16BIT);
 
-                AudioTrack a = new AudioTrack(AudioManager.STREAM_MUSIC, 44100,
+                AudioTrack a = new AudioTrack(AudioManager.STREAM_MUSIC, 22000,
                         android.media.AudioFormat.CHANNEL_CONFIGURATION_MONO, android.media.AudioFormat.ENCODING_PCM_16BIT, size, AudioTrack.MODE_STREAM);
                 byte[] music = new byte[512];
                 a.play();
-                while((i = in.read(music)) != -1)
+                while((i = is.read(music)) != -1)
                     a.write(music, 0, i);
 
-                in.close();
+                is.close();
+                a.release();
             } catch (Exception e) {
                 e.printStackTrace();
             }
