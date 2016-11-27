@@ -13,6 +13,8 @@ import org.json.JSONObject;
 
 import java.io.File;
 
+import ibm.kogbanking.GUI.LoginActivity;
+
 /**
  * Created by andrastuzko on 2016. 11. 26..
  */
@@ -26,20 +28,20 @@ public class WatsonAsync extends AsyncTask<Void, Void, String> {
     }
     @Override
     protected String doInBackground(Void... voids) {
-        /**
+
         WatsonPost w = new WatsonPost(VisualRecognition.VERSION_DATE_2016_05_20);
         return w.executeTask();
-         **/
-        return null;
     }
 
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
 
+        Log.e("hallo", s);
         try {
             JSONObject obj = new JSONObject(s);
             String classifier = obj.getString("classifier_id");
+            ((LoginActivity)callingActivity).accountSet = true;
             SharedPreferences sp = callingActivity.getSharedPreferences("classifier", Activity.MODE_PRIVATE);
             SharedPreferences.Editor editor = sp.edit();
 

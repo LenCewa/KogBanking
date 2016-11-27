@@ -9,8 +9,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.MediaMetadataRetriever;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -38,7 +36,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
@@ -51,20 +48,13 @@ import org.opencv.objdetect.CascadeClassifier;
 
 import ibm.kogbanking.logic.SaveImages;
 import ibm.kogbanking.logic.VisualRecognitionTest;
-import ibm.kogbanking.logic.RealPathUtil;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import ibm.kogbanking.R;
 
@@ -75,7 +65,8 @@ import static android.Manifest.permission.READ_CONTACTS;
  */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
-    boolean accountSet = false;
+    public boolean accountSet = false;
+    String classifier;
     /**
      * Id to identity READ_CONTACTS permission request.
      */
@@ -109,27 +100,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         if (!OpenCVLoader.initDebug()) {
             // Handle initialization error
         }
-        // Set up the login form.
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
-        populateAutoComplete();
 
-        mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
-                    return true;
-                }
-                return false;
-            }
-        });
-
-        SharedPreferences sp = getSharedPreferences("login", Activity.MODE_PRIVATE);
-        String classifier = sp.getString("classifier", "");
-        if(!classifier.equals(""))
+        SharedPreferences sp = getSharedPreferences("classifier", Activity.MODE_PRIVATE);
+        classifier = sp.getString("classifier", "");
+        if(!classifier.equals("")) {
+            Log.e("hallo", "Hallo");
             accountSet = true;
-
+        }
 
         if(accountSet){
             Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -143,7 +120,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 startActivityForResult(takeVideoIntent, 1);
             }
         }
-
         Button skipButton = (Button) findViewById(R.id.skipButton);
         skipButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -153,8 +129,25 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
+        Button login = (Button) findViewById(R.id.email_sign_in_button);
+        login.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(accountSet){
+                    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                        startActivityForResult(takePictureIntent, 1);
+                    }
+                }
+                else {
+                    Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+                    if (takeVideoIntent.resolveActivity(getPackageManager()) != null) {
+                        startActivityForResult(takeVideoIntent, 1);
+                    }
+                }
+            }
+        });
+
 
         getResources().getIdentifier("FILENAME_WITHOUT_EXTENSION",
                 "raw", getPackageName());
@@ -171,21 +164,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1 && resultCode == RESULT_OK) {
-            if(accountSet){
-                Uri imageUri = data.getData();
-                try {
-                    faceDetector(MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri));
-                    String file_path = Environment.getExternalStorageDirectory().getAbsolutePath();
-                    String filename = "login.png";
-                    File f = new File(file_path, filename);
-                    new VisualRecognitionTest(this, f);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            Uri uri = data.getData();
+
+            if(!accountSet)
+                new SaveImages(this).execute(uri);
             else {
-                Uri videoUri = data.getData();
-                new SaveImages(this).execute(videoUri);
+                Bundle extras = data.getExtras();
+                Bitmap imageBitmap = (Bitmap) extras.get("data");
+                faceDetector(imageBitmap);
+                String file_path = Environment.getExternalStorageDirectory().getAbsolutePath();
+                String filename = "login.png";
+                File f = new File(file_path, filename);
+                new VisualRecognitionTest(this, f, classifier).execute();
             }
         }
     }
