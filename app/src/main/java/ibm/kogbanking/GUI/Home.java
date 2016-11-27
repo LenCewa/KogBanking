@@ -24,6 +24,8 @@ import java.util.Locale;
 
 import ibm.kogbanking.CustomAdapter;
 import ibm.kogbanking.R;
+import ibm.kogbanking.logic.WatsonSpeech;
+
 import android.speech.tts.TextToSpeech;
 
 import com.ibm.watson.developer_cloud.http.ServiceCall;
@@ -48,8 +50,6 @@ public class Home extends Activity implements android.speech.tts.TextToSpeech.On
         setContentView(R.layout.activity_home);
 
         tts = new android.speech.tts.TextToSpeech(this, this);
-
-        watsonSpeech();
 
         account = new ArrayList<String[]>();
         String[] test1 = {"Dr. Koch","Arztrechnung", "234", "25.11.16"};
@@ -97,13 +97,13 @@ public class Home extends Activity implements android.speech.tts.TextToSpeech.On
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                String von = adapter.getItem(position)[0];
-                String was = adapter.getItem(position)[1];
-                String wann = adapter.getItem(position)[2];
-                String wieviel = adapter.getItem(position)[3];
+                String transferedTo = adapter.getItem(position)[0];
+                String becauseOf = adapter.getItem(position)[1];
+                String amount = adapter.getItem(position)[2];
+                String date = adapter.getItem(position)[3];
 
-                String text = wieviel + "Euro eingezogen von " + von +  " " + was + "am " + wann;
-                speakOut(text);
+                String text = amount + "Dollar transfered to " + transferedTo +  " because of " + becauseOf + " on " + date;
+                new WatsonSpeech(Home.this, text).execute();
             }
 
         });
@@ -130,53 +130,5 @@ public class Home extends Activity implements android.speech.tts.TextToSpeech.On
     private void speakOut(String text) {
 
         //tts.speak(text, android.speech.tts.TextToSpeech.QUEUE_FLUSH, null);
-    }
-
-    public void watsonSpeech(){
-        com.ibm.watson.developer_cloud.text_to_speech.v1.TextToSpeech service = new com.ibm.watson.developer_cloud.text_to_speech.v1.TextToSpeech();
-        service.setUsernameAndPassword("{username}", "{password}");
-
-        try {
-            String text = "Hello world.";
-            ServiceCall<InputStream> stream = service.synthesize(text, Voice.EN_ALLISON);
-
-            InputStream in = WaveUtils.reWriteWaveHeader(stream.execute());
-            OutputStream out = new FileOutputStream("hello_world.wav");
-            byte[] buffer = new byte[1024];
-
-
-                try
-                {
-
-                    File path=new File(getCacheDir()+"/musicfile.3gp");
-
-                    FileOutputStream fos = new FileOutputStream(path);
-                    fos.write(buffer);
-                    fos.close();
-
-                    MediaPlayer mediaPlayer = new MediaPlayer();
-
-                    FileInputStream fis = new FileInputStream(path);
-                    mediaPlayer.setDataSource(getCacheDir()+"/musicfile.3gp");
-
-                    mediaPlayer.prepare();
-                    mediaPlayer.start();
-                }
-                catch (IOException ex)
-                {
-                    String s = ex.toString();
-                    ex.printStackTrace();
-                }
-
-
-            int length;
-            while ((length = in.read(buffer)) > 0) {
-                out.write(buffer, 0, length);
-            }
-            out.close();
-            in.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }

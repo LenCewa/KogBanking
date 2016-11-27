@@ -101,19 +101,22 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        speakOut("Nehmen sie bitte ein Foto von ihrem Gesicht auf");
+
+
+//        speakOut("Nehmen sie bitte ein Foto von ihrem Gesicht auf");
 
         if (!OpenCVLoader.initDebug()) {
             // Handle initialization error
         }
-
+        Intent intent = new Intent(this, Home.class);
+        startActivity(intent);
         SharedPreferences sp = getSharedPreferences("classifier", Activity.MODE_PRIVATE);
         classifier = sp.getString("classifier", "");
         if(!classifier.equals("")) {
             Log.e("hallo", "Hallo");
             accountSet = true;
         }
-
+/**
         if(accountSet){
             Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -126,6 +129,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 startActivityForResult(takeVideoIntent, 1);
             }
         }
+ **/
         Button skipButton = (Button) findViewById(R.id.skipButton);
         skipButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -422,7 +426,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private void speakOut(String text) {
 
-        tts.speak(text, android.speech.tts.TextToSpeech.QUEUE_FLUSH, null);
+//        tts.speak(text, android.speech.tts.TextToSpeech.QUEUE_FLUSH, null);
     }
 
 
