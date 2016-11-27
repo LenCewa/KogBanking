@@ -40,6 +40,7 @@ import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import Logic.*;
 import ibm.kogbanking.R;
 
 /**
@@ -96,6 +97,12 @@ public class SaveImages extends AsyncTask<Uri, Object, Object> {
         super.onPostExecute(aVoid);
         loading.dismiss();
         new Compress(callingActivity, files, "positives.zip").zip();
+
+        String filePath = Environment.getExternalStorageDirectory().getAbsolutePath();
+        String filename = "0.jpg";
+        File f = new File(filePath, filename);
+
+        new Logic.VisualRecognitionTest(f).execute();
     }
 
     public String faceDetector(Bitmap bmp, int i){
