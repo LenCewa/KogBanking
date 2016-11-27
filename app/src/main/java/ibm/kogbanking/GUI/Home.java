@@ -52,12 +52,12 @@ public class Home extends Activity implements android.speech.tts.TextToSpeech.On
         tts = new android.speech.tts.TextToSpeech(this, this);
 
         account = new ArrayList<String[]>();
-        String[] test1 = {"Dr. Koch","Arztrechnung", "234", "25.11.16"};
-        String[] test2= {"Edeka","Einkauf", "43","22.11.16"};
-        String[] test3 = {"Barmer","Versicherung", "590","19.11.16"};
-        String[] test4 = {"Markus Müller","Miete", "1034","19.11.16"};
-        String[] test5 = {"Amazon","Kindle Reader", "989","16.11.16"};
-        String[] test6 = {"Expedia","Urlaub", "13200","13.11.16"};
+        String[] test1 = {"Dr. Watson","Medical Bill", "234", "11/25/16"};
+        String[] test2= {"Wal-Mart","Shopping", "43","11/22/16"};
+        String[] test3 = {"Bank of America","Ensurance", "590","11/19/16"};
+        String[] test4 = {"John Dowe","Rent", "1034","11/19/16"};
+        String[] test5 = {"Amazon","Kindle Reader", "989","11/16/16"};
+        String[] test6 = {"Expedia","Vacation", "13200","11/13/16"};
 
         account.add(0, test1);
         account.add(0, test2);
@@ -103,7 +103,7 @@ public class Home extends Activity implements android.speech.tts.TextToSpeech.On
                 String date = adapter.getItem(position)[3];
 
                 String text = amount + "Dollar transfered to " + transferedTo +  " because of " + becauseOf + " on " + date;
-                new WatsonSpeech(Home.this, text).execute();
+                new WatsonSpeech(Home.this, text, true).execute();
             }
 
         });

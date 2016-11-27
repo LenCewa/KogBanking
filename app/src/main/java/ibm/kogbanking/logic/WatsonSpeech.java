@@ -1,12 +1,14 @@
 package ibm.kogbanking.logic;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.media.MediaPlayer;
 import android.net.rtp.AudioStream;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.provider.MediaStore;
 
 import com.ibm.watson.developer_cloud.http.ServiceCall;
 import com.ibm.watson.developer_cloud.text_to_speech.v1.model.AudioFormat;
@@ -20,6 +22,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import ibm.kogbanking.GUI.LoginActivity;
+
 /**
  * Created by Yannick on 27.11.2016.
  */
@@ -28,10 +32,12 @@ public class WatsonSpeech extends AsyncTask<Void, Void, Void> {
 
     Activity callingActivity;
     String text;
+    boolean accountSet;
 
-    public WatsonSpeech(Activity callingActivity, String text){
+    public WatsonSpeech(Activity callingActivity, String text, boolean accountSet){
         this.callingActivity = callingActivity;
         this.text = text;
+        this.accountSet = accountSet;
     }
     @Override
     protected Void doInBackground(Void... params) {
@@ -78,5 +84,25 @@ public class WatsonSpeech extends AsyncTask<Void, Void, Void> {
                 e.printStackTrace();
             }
         return null;
+    }
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        super.onPostExecute(aVoid);
+
+        if(LoginActivity.login) {
+            LoginActivity.login = false;
+            if (accountSet) {
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (takePictureIntent.resolveActivity(callingActivity.getPackageManager()) != null) {
+                    callingActivity.startActivityForResult(takePictureIntent, 1);
+                }
+            } else {
+                Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+                if (takeVideoIntent.resolveActivity(callingActivity.getPackageManager()) != null) {
+                    callingActivity.startActivityForResult(takeVideoIntent, 1);
+                }
+            }
+        }
     }
 }

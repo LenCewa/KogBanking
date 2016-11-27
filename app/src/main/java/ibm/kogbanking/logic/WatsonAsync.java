@@ -1,6 +1,7 @@
 package ibm.kogbanking.logic;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -13,6 +14,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 
+import ibm.kogbanking.GUI.Home;
 import ibm.kogbanking.GUI.LoginActivity;
 
 /**
@@ -37,7 +39,6 @@ public class WatsonAsync extends AsyncTask<Void, Void, String> {
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
 
-        Log.e("hallo", s);
         try {
             JSONObject obj = new JSONObject(s);
             String classifier = obj.getString("classifier_id");
@@ -47,6 +48,8 @@ public class WatsonAsync extends AsyncTask<Void, Void, String> {
 
             editor.putString("classifier", classifier);
             editor.commit();
+
+            callingActivity.startActivity(new Intent(callingActivity, Home.class));
 
    } catch (JSONException e) {
             e.printStackTrace();
