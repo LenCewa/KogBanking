@@ -1,4 +1,4 @@
-package Logic;
+package ibm.kogbanking.logic;
 
 import android.os.AsyncTask;
 import android.os.Environment;

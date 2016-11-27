@@ -1,4 +1,4 @@
-package Logic;
+package ibm.kogbanking.logic;
 
 /**
  * Created by Yannick on 03.11.2016.
