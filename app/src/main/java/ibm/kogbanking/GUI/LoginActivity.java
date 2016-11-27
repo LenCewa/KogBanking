@@ -3,11 +3,12 @@ package ibm.kogbanking.GUI;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.MediaMetadataRetriever;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -35,25 +36,25 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfRect;
+import org.opencv.core.Rect;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
+import org.opencv.objdetect.CascadeClassifier;
 
 import ibm.kogbanking.logic.SaveImages;
 import ibm.kogbanking.logic.VisualRecognitionTest;
-import ibm.kogbanking.logic.RealPathUtil;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import ibm.kogbanking.R;
 
@@ -64,6 +65,8 @@ import static android.Manifest.permission.READ_CONTACTS;
  */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
+    public boolean accountSet = false;
+    String classifier;
     /**
      * Id to identity READ_CONTACTS permission request.
      */
@@ -97,33 +100,26 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         if (!OpenCVLoader.initDebug()) {
             // Handle initialization error
         }
-        // Set up the login form.
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
-        populateAutoComplete();
 
-        mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
-                    return true;
-                }
-                return false;
+        SharedPreferences sp = getSharedPreferences("classifier", Activity.MODE_PRIVATE);
+        classifier = sp.getString("classifier", "");
+        if(!classifier.equals("")) {
+            Log.e("hallo", "Hallo");
+            accountSet = true;
+        }
+
+        if(accountSet){
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                startActivityForResult(takePictureIntent, 1);
             }
-        });
-
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-                if (takeVideoIntent.resolveActivity(getPackageManager()) != null) {
-                    startActivityForResult(takeVideoIntent, 1);
-                }
+        }
+        else {
+            Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+            if (takeVideoIntent.resolveActivity(getPackageManager()) != null) {
+                startActivityForResult(takeVideoIntent, 1);
             }
-        });
-
+        }
         Button skipButton = (Button) findViewById(R.id.skipButton);
         skipButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -133,8 +129,25 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
+        Button login = (Button) findViewById(R.id.email_sign_in_button);
+        login.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(accountSet){
+                    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                        startActivityForResult(takePictureIntent, 1);
+                    }
+                }
+                else {
+                    Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+                    if (takeVideoIntent.resolveActivity(getPackageManager()) != null) {
+                        startActivityForResult(takeVideoIntent, 1);
+                    }
+                }
+            }
+        });
+
 
         getResources().getIdentifier("FILENAME_WITHOUT_EXTENSION",
                 "raw", getPackageName());
@@ -151,39 +164,59 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1 && resultCode == RESULT_OK) {
-            Uri videoUri = data.getData();
-            //saveVideo(videoUri);
-            new SaveImages(this).execute(videoUri);
+            Uri uri = data.getData();
+
+            if(!accountSet)
+                new SaveImages(this).execute(uri);
+            else {
+                Bundle extras = data.getExtras();
+                Bitmap imageBitmap = (Bitmap) extras.get("data");
+                faceDetector(imageBitmap);
+                String file_path = Environment.getExternalStorageDirectory().getAbsolutePath();
+                String filename = "login.png";
+                File f = new File(file_path, filename);
+                new VisualRecognitionTest(this, f, classifier).execute();
+            }
         }
     }
 
-
-
-    public void saveVideo(Uri sourceuri){
-        String sourceFilename= sourceuri.getPath();
-        String destinationFilename = android.os.Environment.getExternalStorageDirectory().getPath()+File.separatorChar+"auth.mp4";
-
-        BufferedInputStream bis = null;
-        BufferedOutputStream bos = null;
-
+    public String faceDetector(Bitmap bmp){
+        InputStream is = getResources().openRawResource(R.raw.haarcascade_frontalface_alt);
+        File cascadeDir = getDir("cascade", Context.MODE_PRIVATE);
+        File mCascadeFile = new File(cascadeDir, "haarcascade_frontalface_alt.xml");
         try {
-            bis = new BufferedInputStream(new FileInputStream(sourceFilename));
-            bos = new BufferedOutputStream(new FileOutputStream(destinationFilename, false));
-            byte[] buf = new byte[1024];
-            bis.read(buf);
-            do {
-                bos.write(buf);
-            } while(bis.read(buf) != -1);
-        } catch (IOException e) {
+            FileOutputStream os = new FileOutputStream(mCascadeFile);
 
-        } finally {
-            try {
-                if (bis != null) bis.close();
-                if (bos != null) bos.close();
-            } catch (IOException e) {
-
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = is.read(buffer)) != -1) {
+                os.write(buffer, 0, bytesRead);
             }
+            is.close();
+            os.close();
         }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+
+        CascadeClassifier faceDetector = new CascadeClassifier(mCascadeFile.getAbsolutePath());
+        Mat image = new Mat();
+        Utils.bitmapToMat(bmp, image);
+        Imgproc.cvtColor(image, image, Imgproc.COLOR_BGR2RGB);
+
+        MatOfRect faceDetections = new MatOfRect();
+        faceDetector.detectMultiScale(image, faceDetections);
+
+        Rect rect = new Rect();
+        for (Rect r : faceDetections.toArray()) {
+            rect = r;
+        }
+
+        String file_path = Environment.getExternalStorageDirectory().getAbsolutePath();
+        String filename = file_path + "/" + "login" + ".png";
+        Imgcodecs.imwrite(filename, new Mat(image, rect));
+
+        return filename;
     }
 
     private boolean mayRequestContacts() {
