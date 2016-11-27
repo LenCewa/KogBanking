@@ -42,12 +42,12 @@ public class Home extends Activity implements android.speech.tts.TextToSpeech.On
         tts = new android.speech.tts.TextToSpeech(this, this);
 
         account = new ArrayList<String[]>();
-        String[] test1 = {"Dr. Koch","Arztrechnung", "234", "25.11.16"};
-        String[] test2= {"Edeka","Einkauf", "43","22.11.16"};
-        String[] test3 = {"Barmer","Versicherung", "590","19.11.16"};
-        String[] test4 = {"Markus Müller","Miete", "1034","19.11.16"};
-        String[] test5 = {"Amazon","Kindle Reader", "989","16.11.16"};
-        String[] test6 = {"Expedia","Urlaub", "13200","13.11.16"};
+        String[] test1 = {"Dr. Koch","Arztrechnung", "234", "25.November 16"};
+        String[] test2= {"Edeka","Einkauf", "43","22.November 16"};
+        String[] test3 = {"Barmer","Versicherung", "590","19.November 16"};
+        String[] test4 = {"Markus Müller","Miete", "1034","19.November 16"};
+        String[] test5 = {"Amazon","Kindle Reader", "989","16.November 16"};
+        String[] test6 = {"Expedia","Urlaub", "13200","13.November 16"};
 
         account.add(0, test1);
         account.add(0, test2);
@@ -92,7 +92,7 @@ public class Home extends Activity implements android.speech.tts.TextToSpeech.On
                 String wieviel = adapter.getItem(position)[2];
                 String wann = adapter.getItem(position)[3];
 
-                String text = wieviel + "Euro eingezogen von " + von +  " " + was + "am " + wann;
+                String text = wieviel + "Dollar transfered to " + von +  " because of " + was + "on " + wann;
                 speakOut(text);
             }
 
@@ -103,13 +103,13 @@ public class Home extends Activity implements android.speech.tts.TextToSpeech.On
     public void onInit(int status) {
         if (status == android.speech.tts.TextToSpeech.SUCCESS) {
 
-            int result = tts.setLanguage(Locale.GERMAN);
+            int result = tts.setLanguage(Locale.ENGLISH);
 
             if (result == android.speech.tts.TextToSpeech.LANG_MISSING_DATA
                     || result == android.speech.tts.TextToSpeech.LANG_NOT_SUPPORTED) {
                 Log.e("TTS", "This Language is not supported");
             } else {
-                speakOut("Willkommen ihr Nuttenkinder");
+                speakOut("Welcome");
             }
 
         } else {
