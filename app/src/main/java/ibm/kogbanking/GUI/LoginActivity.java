@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -55,6 +56,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import ibm.kogbanking.R;
 
@@ -63,7 +65,8 @@ import static android.Manifest.permission.READ_CONTACTS;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>,
+        TextToSpeech.OnInitListener {
 
     public boolean accountSet = false;
     String classifier;
@@ -91,11 +94,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    TextToSpeech tts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        speakOut("Nehmen sie bitte ein Foto von ihrem Gesicht auf");
 
         if (!OpenCVLoader.initDebug()) {
             // Handle initialization error
@@ -394,6 +400,29 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
         mEmailView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onInit(int status) {
+        if (status == android.speech.tts.TextToSpeech.SUCCESS) {
+
+            int result = tts.setLanguage(Locale.GERMAN);
+
+            if (result == android.speech.tts.TextToSpeech.LANG_MISSING_DATA
+                    || result == android.speech.tts.TextToSpeech.LANG_NOT_SUPPORTED) {
+                Log.e("TTS", "This Language is not supported");
+            } else {
+                speakOut("Willkommen ihr Nuttenkinder");
+            }
+
+        } else {
+            Log.e("TTS", "Initilization Failed!");
+        }
+    }
+
+    private void speakOut(String text) {
+
+        tts.speak(text, android.speech.tts.TextToSpeech.QUEUE_FLUSH, null);
     }
 
 

@@ -89,8 +89,8 @@ public class Home extends Activity implements android.speech.tts.TextToSpeech.On
 
                 String von = adapter.getItem(position)[0];
                 String was = adapter.getItem(position)[1];
-                String wann = adapter.getItem(position)[2];
-                String wieviel = adapter.getItem(position)[3];
+                String wieviel = adapter.getItem(position)[2];
+                String wann = adapter.getItem(position)[3];
 
                 String text = wieviel + "Euro eingezogen von " + von +  " " + was + "am " + wann;
                 speakOut(text);
@@ -109,7 +109,7 @@ public class Home extends Activity implements android.speech.tts.TextToSpeech.On
                     || result == android.speech.tts.TextToSpeech.LANG_NOT_SUPPORTED) {
                 Log.e("TTS", "This Language is not supported");
             } else {
-                speakOut("Willkommen");
+                speakOut("Willkommen ihr Nuttenkinder");
             }
 
         } else {
