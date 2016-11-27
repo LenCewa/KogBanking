@@ -16,6 +16,8 @@ import com.ibm.watson.developer_cloud.conversation.v1.model.MessageResponse;
 import java.util.ArrayList;
 
 import ibm.kogbanking.R;
+import ibm.kogbanking.logic.WatsonCommunication;
+import okhttp3.MultipartBody;
 
 /**
  * Created by len13 on 26.11.2016.
@@ -26,21 +28,16 @@ public class VoiceInterfaceActivity extends Activity {
     ListView messages;
     EditText aMsg;
     Button send;
-    ArrayList<String> conversation;
-    ArrayAdapter<String> adapter;
+    public ArrayList<String> conversation;
+    public ArrayAdapter<String> adapter;
 
-    ConversationService service;
-    String workspaceId = "25dfa8a0-0263-471b-8980-317e68c30488";
-    MessageRequest newMessage;
+
     MessageResponse response;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_voice_interface);
-
-        service = new ConversationService("2016-09-20");
-        service.setUsernameAndPassword("{ORqPn3GxwWDu}", "{778fd675-2f27-422c-8599-8528a8766890}");
 
         send = (Button) findViewById(R.id.sendBtn);
         aMsg = (EditText) findViewById(R.id.messageTxt);
@@ -58,11 +55,7 @@ public class VoiceInterfaceActivity extends Activity {
                 aMsg.setText("");
                 adapter.notifyDataSetChanged();
 
-                newMessage = new MessageRequest.Builder().inputText(msg).build();
-                response = service.message(workspaceId, newMessage).execute();
-
-                conversation.add(response.toString());
-                adapter.notifyDataSetChanged();
+                new WatsonCommunication(VoiceInterfaceActivity.this, msg).execute();
             }
         });
 

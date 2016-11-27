@@ -4,43 +4,24 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.media.MediaMetadataRetriever;
-import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.util.Log;
-import android.util.SparseArray;
-import android.widget.Toast;
-
-import com.google.android.gms.vision.Frame;
-import com.google.android.gms.vision.face.Face;
-import com.google.android.gms.vision.face.FaceDetector;
 
 import org.opencv.android.Utils;
-import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfRect;
-import org.opencv.core.Point;
 import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
-import Logic.*;
 import ibm.kogbanking.R;
 
 /**
@@ -76,9 +57,9 @@ public class SaveImages extends AsyncTask<Uri, Object, Object> {
         try {
             retriever.setDataSource(callingActivity, uri);
 
-            for (int i = 0; i < 10; i++) {
-                files[i] = faceDetector(retriever.getFrameAtTime(33333, MediaMetadataRetriever.OPTION_CLOSEST),i);
-            }
+            for (int i = 0; i < 10; i++)
+                files[i] = faceDetector(retriever.getFrameAtTime(i * 250000, MediaMetadataRetriever.OPTION_CLOSEST),i);
+
         } catch (IllegalArgumentException ex) {
             ex.printStackTrace();
         } catch (RuntimeException ex) {
@@ -97,12 +78,7 @@ public class SaveImages extends AsyncTask<Uri, Object, Object> {
         super.onPostExecute(aVoid);
         loading.dismiss();
         new Compress(callingActivity, files, "positives.zip").zip();
-
-        String filePath = Environment.getExternalStorageDirectory().getAbsolutePath();
-        String filename = "0.jpg";
-        File f = new File(filePath, filename);
-
-        new Logic.VisualRecognitionTest(f).execute();
+        new WatsonAsync(callingActivity).execute();
     }
 
     public String faceDetector(Bitmap bmp, int i){
@@ -127,6 +103,7 @@ public class SaveImages extends AsyncTask<Uri, Object, Object> {
         CascadeClassifier faceDetector = new CascadeClassifier(mCascadeFile.getAbsolutePath());
         Mat image = new Mat();
         Utils.bitmapToMat(bmp, image);
+        Imgproc.cvtColor(image, image, Imgproc.COLOR_BGR2RGB);
 
         MatOfRect faceDetections = new MatOfRect();
         faceDetector.detectMultiScale(image, faceDetections);
@@ -137,7 +114,7 @@ public class SaveImages extends AsyncTask<Uri, Object, Object> {
         }
 
         String file_path = Environment.getExternalStorageDirectory().getAbsolutePath();
-        String filename = file_path + "/" + "output" + i + ".jpg";
+        String filename = file_path + "/" + "output" + i + ".png";
         Imgcodecs.imwrite(filename, new Mat(image, rect));
 
         return filename;
