@@ -3,6 +3,7 @@ package ibm.kogbanking.GUI;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -10,44 +11,43 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.ibm.watson.developer_cloud.http.ServiceCall;
-import com.ibm.watson.developer_cloud.text_to_speech.v1.TextToSpeech;
-import com.ibm.watson.developer_cloud.text_to_speech.v1.model.AudioFormat;
-import com.ibm.watson.developer_cloud.text_to_speech.v1.model.Voice;
-import com.ibm.watson.developer_cloud.text_to_speech.v1.util.WaveUtils;
-
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import ibm.kogbanking.CustomAdapter;
 import ibm.kogbanking.R;
+import android.speech.tts.TextToSpeech;
 
 /**
  * Created by Ludwig on 26.11.2016.
  */
 
-public class Home extends Activity {
+public class Home extends Activity implements android.speech.tts.TextToSpeech.OnInitListener{
     ArrayList<String[]> account;
     ImageView profilePic;
     TextView balance;
     Button transactionButton;
     ListView olderTransactions;
     Button voiceUI;
-
+    android.speech.tts.TextToSpeech tts;
+    CustomAdapter adapter;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        tts = new android.speech.tts.TextToSpeech(this, this);
+
         account = new ArrayList<String[]>();
-        String[] test1 = {"DE43 123456789","Arztrechnung", "234$", "25.11.16"};
-        String[] test2= {"DE43 432094324","Einkauf", "43$","22.11.16"};
-        String[] test3 = {"DE43 324989234","Versicherung", "590$","19.11.16"};
-        String[] test4 = {"DE43 342789849","Miete", "1034$","19.11.16"};
-        String[] test5 = {"DE43 989827498","Amazon", "989$","16.11.16"};
-        String[] test6 = {"DE43 238974832","Urlaub", "13200$","13.11.16"};
+        String[] test1 = {"Dr. Koch","Arztrechnung", "234", "25.11.16"};
+        String[] test2= {"Edeka","Einkauf", "43","22.11.16"};
+        String[] test3 = {"Barmer","Versicherung", "590","19.11.16"};
+        String[] test4 = {"Markus Müller","Miete", "1034","19.11.16"};
+        String[] test5 = {"Amazon","Kindle Reader", "989","16.11.16"};
+        String[] test6 = {"Expedia","Urlaub", "13200","13.11.16"};
 
         account.add(0, test1);
         account.add(0, test2);
@@ -80,21 +80,45 @@ public class Home extends Activity {
             }
         });
 
-        olderTransactions.setAdapter(new CustomAdapter(this, account));
+        adapter = new CustomAdapter(this, account);
+        olderTransactions.setAdapter(adapter);
 
         olderTransactions.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                TextToSpeech service = new TextToSpeech();
-                service.setUsernameAndPassword("778fd675-2f27-422c-8599-8528a8766890", "ORqPn3GxwWDu");
-                ServiceCall<List<Voice>> voices = service.getVoices();
 
-                String text = "Hallo";
-                service.synthesize(text, Voice.DE_BIRGIT, AudioFormat.WAV).execute();
+                String von = adapter.getItem(position)[0];
+                String was = adapter.getItem(position)[1];
+                String wann = adapter.getItem(position)[2];
+                String wieviel = adapter.getItem(position)[3];
 
+                String text = wieviel + "Euro eingezogen von " + von +  " " + was + "am " + wann;
+                speakOut(text);
             }
 
         });
     }
 
+    @Override
+    public void onInit(int status) {
+        if (status == android.speech.tts.TextToSpeech.SUCCESS) {
+
+            int result = tts.setLanguage(Locale.GERMAN);
+
+            if (result == android.speech.tts.TextToSpeech.LANG_MISSING_DATA
+                    || result == android.speech.tts.TextToSpeech.LANG_NOT_SUPPORTED) {
+                Log.e("TTS", "This Language is not supported");
+            } else {
+                speakOut("Willkommen");
+            }
+
+        } else {
+            Log.e("TTS", "Initilization Failed!");
+        }
+    }
+
+    private void speakOut(String text) {
+
+        tts.speak(text, android.speech.tts.TextToSpeech.QUEUE_FLUSH, null);
+    }
 }

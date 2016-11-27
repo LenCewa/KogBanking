@@ -28,7 +28,7 @@ public class CustomAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int position) {
+    public String[] getItem(int position) {
         return data.get(position);
     }
 
