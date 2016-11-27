@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@android:color/black">
 
     <ImageView
         android:layout_marginTop="20dp"
         android:layout_marginLeft="20dp"
-        android:src="@mipmap/ic_launcher"
+        android:src="@drawable/ibm"
         android:layout_height="100dp"
         android:id="@+id/profilePic"
-        android:layout_width="100dp" />
+        android:layout_width="100dp"
+        android:scaleType="centerCrop" />
 
     <TextView
         android:text="Balance"
@@ -21,10 +23,10 @@
         android:id="@+id/balance"
         android:textSize="24sp"
         android:textAlignment="center"
-        android:textColor="@android:color/black" />
+        android:textColor="@android:color/white" />
 
     <Button
-        android:text="Transaction"
+        android:text="New Transaction"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/balance"
@@ -35,15 +37,6 @@
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:textColor="@android:color/holo_blue_dark" />
 
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="83dp"
-        android:id="@+id/olderTransactions"
-        android:layout_below="@+id/profilePic"
-        android:layout_alignLeft="@+id/profilePic"
-        android:layout_alignStart="@+id/profilePic" />
-
     <Button
         android:text="VoiceRecog"
         android:layout_width="wrap_content"
@@ -52,4 +45,13 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="18dp"
         android:id="@+id/voiceRecogBtn" />
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="30dp"
+        android:layout_marginRight="20dp"
+        android:id="@+id/olderTransactions"
+        android:layout_below="@+id/voiceRecogBtn"
+        android:layout_alignStart="@+id/profilePic" />
 </RelativeLayout>

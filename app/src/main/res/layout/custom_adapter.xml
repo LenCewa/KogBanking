@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/transID"
         android:textSize="18sp"
-        android:textColor="@android:color/black"
+        android:textColor="@android:color/white"
         android:fontFamily="serif" />
 
     <TextView
@@ -20,7 +20,7 @@
         android:layout_marginTop="10dp"
         android:id="@+id/topic"
         android:textSize="18sp"
-        android:textColor="@android:color/black"
+        android:textColor="@android:color/white"
         android:fontFamily="serif" />
 
     <TextView
@@ -34,7 +34,7 @@
         android:layout_alignTop="@+id/transID"
         android:layout_marginTop="30dp"
         android:textSize="24sp"
-        android:textColor="@android:color/black"
+        android:textColor="@android:color/white"
         android:fontFamily="serif" />
 
     <TextView
@@ -48,5 +48,5 @@
         android:id="@+id/date"
         android:textSize="18sp"
         android:fontFamily="serif"
-        android:textColor="@android:color/black" />
+        android:textColor="@android:color/white" />
 </RelativeLayout>

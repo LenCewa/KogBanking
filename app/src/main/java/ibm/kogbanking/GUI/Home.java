@@ -32,6 +32,8 @@ import com.ibm.watson.developer_cloud.http.ServiceCall;
 import com.ibm.watson.developer_cloud.text_to_speech.v1.model.Voice;
 import com.ibm.watson.developer_cloud.text_to_speech.v1.util.WaveUtils;
 
+import org.opencv.android.OpenCVLoader;
+
 /**
  * Created by Ludwig on 26.11.2016.
  */
@@ -48,6 +50,10 @@ public class Home extends Activity implements android.speech.tts.TextToSpeech.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        if (!OpenCVLoader.initDebug()) {
+            // Handle initialization error
+        }
 
         tts = new android.speech.tts.TextToSpeech(this, this);
 

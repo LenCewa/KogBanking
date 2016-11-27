@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@android:color/black">
 
     <ImageView
         android:layout_width="match_parent"
@@ -19,7 +20,7 @@
         android:id="@+id/resultText"
         android:textAlignment="center"
         android:textSize="24sp"
-        android:textColor="@android:color/black"
+        android:textColor="@android:color/white"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginBottom="14dp"
@@ -32,7 +33,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/scanIBAN"
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
-        android:textColor="@android:color/holo_blue_dark"
+        android:textColor="@android:color/holo_blue_bright"
         android:layout_above="@+id/resultText"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="15dp" />
@@ -43,12 +44,13 @@
         android:layout_marginBottom="28dp"
         android:id="@+id/amount"
         android:textSize="24sp"
-        android:textColor="@android:color/black"
+        android:textColor="@android:color/white"
         android:textAlignment="center"
         android:inputType="number"
         android:hint="Amount"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:text="Amount" />
 
     <Button
         android:text="Take Photo"
@@ -56,7 +58,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/takePhoto"
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
-        android:textColor="@android:color/holo_blue_dark"
+        android:textColor="@android:color/holo_blue_bright"
         android:layout_above="@+id/scanIBAN"
         android:layout_alignStart="@+id/scanIBAN" />
 
