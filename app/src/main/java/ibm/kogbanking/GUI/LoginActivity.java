@@ -128,34 +128,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         }
 
-        Button skipButton = (Button) findViewById(R.id.skipButton);
-        skipButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, Home.class);
-                startActivity(intent);
-            }
-        });
-
-        Button login = (Button) findViewById(R.id.email_sign_in_button);
-        login.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(accountSet){
-                    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                        startActivityForResult(takePictureIntent, 1);
-                    }
-                }
-                else {
-                    Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-                    if (takeVideoIntent.resolveActivity(getPackageManager()) != null) {
-                        startActivityForResult(takeVideoIntent, 1);
-                    }
-                }
-            }
-        });
-
 
         getResources().getIdentifier("FILENAME_WITHOUT_EXTENSION",
                 "raw", getPackageName());
