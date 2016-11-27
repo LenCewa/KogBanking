@@ -11,6 +11,7 @@ import android.widget.ListView;
 import com.ibm.watson.developer_cloud.conversation.v1.ConversationService;
 import com.ibm.watson.developer_cloud.conversation.v1.model.MessageRequest;
 import com.ibm.watson.developer_cloud.conversation.v1.model.MessageResponse;
+import com.ibm.watson.developer_cloud.speech_to_text.v1.SpeechToText;
 
 
 import java.util.ArrayList;
@@ -28,6 +29,11 @@ public class VoiceInterfaceActivity extends Activity {
     ListView messages;
     EditText aMsg;
     Button send;
+    String username = "778fd675-2f27-422c-8599-8528a8766890";
+    String password = "ORqPn3GxwWDu";
+
+    SpeechToText service;
+
     public ArrayList<String> conversation;
     public ArrayAdapter<String> adapter;
 
@@ -46,6 +52,12 @@ public class VoiceInterfaceActivity extends Activity {
         conversation.add("Ignore.");
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, conversation);
         messages.setAdapter(adapter);
+
+        //[SPEECH TO TEXT BEGIN]
+        service = new SpeechToText();
+        service.setUsernameAndPassword(username,password);
+
+        //[SPEECH TO TEXT end]
 
         send.setOnClickListener(new View.OnClickListener() {
             @Override

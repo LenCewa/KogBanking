@@ -8,11 +8,18 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.googlecode.tesseract.android.TessBaseAPI;
+import com.ibm.watson.developer_cloud.text_to_speech.v1.TextToSpeech;
+import com.ibm.watson.developer_cloud.text_to_speech.v1.model.AudioFormat;
+import com.ibm.watson.developer_cloud.text_to_speech.v1.model.Voice;
+import com.ibm.watson.developer_cloud.text_to_speech.v1.util.WaveUtils;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
@@ -25,6 +32,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 import ibm.kogbanking.R;
 
@@ -75,6 +83,7 @@ public class Transaction extends Activity {
                     resultText.setText(result);
             }
         });
+
     }
 
     private void copyFile() {

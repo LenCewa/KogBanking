@@ -4,12 +4,23 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.ibm.watson.developer_cloud.http.ServiceCall;
+import com.ibm.watson.developer_cloud.text_to_speech.v1.TextToSpeech;
+import com.ibm.watson.developer_cloud.text_to_speech.v1.model.AudioFormat;
+import com.ibm.watson.developer_cloud.text_to_speech.v1.model.Voice;
+import com.ibm.watson.developer_cloud.text_to_speech.v1.util.WaveUtils;
+
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import ibm.kogbanking.CustomAdapter;
 import ibm.kogbanking.R;
@@ -70,5 +81,20 @@ public class Home extends Activity {
         });
 
         olderTransactions.setAdapter(new CustomAdapter(this, account));
+
+        olderTransactions.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                TextToSpeech service = new TextToSpeech();
+                service.setUsernameAndPassword("778fd675-2f27-422c-8599-8528a8766890", "ORqPn3GxwWDu");
+                ServiceCall<List<Voice>> voices = service.getVoices();
+
+                String text = "Hallo";
+                service.synthesize(text, Voice.DE_BIRGIT, AudioFormat.WAV).execute();
+
+            }
+
+        });
     }
+
 }
