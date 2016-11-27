@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -12,6 +13,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.googlecode.tesseract.android.TessBaseAPI;
+
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
+import org.opencv.core.Size;
+import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -28,13 +34,12 @@ import ibm.kogbanking.R;
  */
 
 public class Transaction extends Activity {
-    Button scanIBAN;
     Button takePhoto;
+    Button scanIBAN;
     ImageView ibanPic;
-    String datapath = "";
-    Bitmap image;
     TessBaseAPI mTess;
     TextView resultText;
+    String datapath;
 
 
 
@@ -43,9 +48,7 @@ public class Transaction extends Activity {
         setContentView(R.layout.activity_transaction);
 
         resultText = (TextView) findViewById(R.id.resultText);
-
         ibanPic = (ImageView)  findViewById(R.id.ibanPic);
-
         takePhoto = (Button) findViewById(R.id.takePhoto);
 
         takePhoto.setOnClickListener(new View.OnClickListener() {
@@ -61,18 +64,15 @@ public class Transaction extends Activity {
         scanIBAN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //image = ((BitmapDrawable)ibanPic.getDrawable()).getBitmap();
-                image = BitmapFactory.decodeResource(getResources(), R.drawable.bank);
+                Bitmap image = ((BitmapDrawable)ibanPic.getDrawable()).getBitmap();
+                filterBitMap(image);
                 datapath = getFilesDir()+ "/tesseract/";
-                checkFile(new File(datapath + "tessdata/"));
-                String lang = "eng";
-                mTess = new TessBaseAPI();
-                mTess.init(datapath, lang);
-                mTess.setImage(image);
-                String result = mTess.getUTF8Text();
-                result = extractIban(result);
-                resultText.setText(result);
-                mTess.end();
+                String result = getImageText(datapath, image);
+                String ibText = getIban(result);
+                if(ibText != null)
+                    resultText.setText(ibText);
+                else
+                    resultText.setText(result);
             }
         });
     }
@@ -81,14 +81,11 @@ public class Transaction extends Activity {
         try {
             //location we want the file to be at
             String filepath = datapath + "/tessdata/eng.traineddata";
-
             //get access to AssetManager
             AssetManager assetManager = getAssets();
-
             //open byte streams for reading/writing
             InputStream instream = assetManager.open("tessdata/eng.traineddata");
             OutputStream outstream = new FileOutputStream(filepath);
-
             //copy the file to the location specified by filepath
             byte[] buffer = new byte[1024];
             int read;
@@ -128,8 +125,43 @@ public class Transaction extends Activity {
         }
     }
 
-    private String extractIban(String imageResult){
-        String iban = imageResult.substring(4, 32);
-        return iban;
+    public Bitmap filterBitMap(Bitmap bm){
+        Bitmap bitmap = bm;
+        Mat imageMat = new Mat();
+        Utils.bitmapToMat(bitmap, imageMat);
+        Imgproc.cvtColor(imageMat, imageMat, Imgproc.COLOR_BGR2GRAY);
+        Imgproc.GaussianBlur(imageMat, imageMat, new Size(3, 3), 0);
+        Imgproc.adaptiveThreshold(imageMat, imageMat, 255, Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY, 5, 4);
+        Utils.matToBitmap(imageMat, bitmap);
+        BitmapDrawable bd = new BitmapDrawable(getResources(),bitmap);
+        ibanPic.setImageDrawable(bd);
+        imageMat = null;
+        return bitmap;
     }
+
+    public String getImageText(String path, Bitmap bm){
+        String result;
+        checkFile(new File(datapath + "tessdata/"));
+        String lang = "eng";
+        mTess = new TessBaseAPI();
+        mTess.init(datapath, lang);
+        mTess.setImage(bm);
+        result = mTess.getUTF8Text();
+        mTess.end();
+
+        return result;
+    }
+
+    public String getIban(String input){
+        String result = null;
+
+        for(int i = 0; i < input.length(); i++){
+            Character c = input.charAt(i);
+            if(i > 0 && input.charAt(i - 1) == 'D' && input.charAt(i) == 'E')
+                if(i + 26 < input.length())
+                    result = input.substring(i - 1, i + 26);
+        }
+        return result;
+    }
+
 }
